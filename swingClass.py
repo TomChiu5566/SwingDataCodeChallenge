@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 class swing:
     # Initialize a swing by reading csv file
@@ -9,11 +10,32 @@ class swing:
     
     # Print data in a column (or the whole data frame by default)
     def print(self, col="default"):
-        if (col is "default"):
+        if col is "default":
             print(self.df)
         else:
             assert col in self.df.columns, "invalid column, should be one of [timestamp, ax, ay, az, wx, wy, wz]"
             print(self.df[col])
+            
+    def plot(self, col="default"):
+        if col is "default":
+            for col in self.df.columns:
+                if col is not "timestamp":
+                    data = self.df[col].values
+                    x = np.arange(len(data))
+                    plt.plot(x, data, linewidth=2)
+            plt.title("Plt for all columns")
+            plt.xlabel("Index")
+            plt.ylabel("Value")
+        else:
+            data = self.df[col].values
+            x = np.arange(len(data))
+            plt.plot(x, data, linewidth=2)
+            plt.title("Plt for " + col)
+            plt.xlabel("Index")
+            plt.ylabel("Value")
+        plt.show()
+
+            
     '''
     Search values above threshold
     Return the first index where data have such values for at least winLength in a row
@@ -175,3 +197,7 @@ class swing:
                 end = OutRangePoints[i] + indexBegin - 1
                 tuplesList.append((begin, end))
             return tuplesList
+
+if __name__ == '__main__':
+	latestSwing = swing('./latestSwing.csv')
+	latestSwing.plot()
